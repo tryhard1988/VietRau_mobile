@@ -42,13 +42,11 @@ export default function BottomTabs({ navigation }) {
     >
       <Tab.Screen name="Sản Phẩm">
         {() => (
-          <>
-            <HeaderTop onCartPress={() => navigation.navigate("Cart")} />
+          <>            
             <ProductList />
           </>
         )}
       </Tab.Screen>
-
       <Tab.Screen name="Giới thiệu c.ty" component={AboutScreen} />
       <Tab.Screen name="Tin tức" component={NewsScreen} />
       <Tab.Screen name="Tôi" component={ProfileScreen} />
