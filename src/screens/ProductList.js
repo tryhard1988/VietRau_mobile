@@ -44,23 +44,19 @@ export default function ProductList() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  // Redux state
   const products = useSelector(selectProducts);
   const loading = useSelector(selectProductsLoading);
   const searchQuery = useSelector(selectSearchQuery);
   const categoryIds = useSelector(selectCategoryIds);
 
-  // Local state
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [screenWidth] = useState(Dimensions.get("window").width);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // 👉 Local inputText cho search box
-  const [inputText, setInputText] = useState(searchQuery);
+  const [inputText, setInputText] = useState(""); // local search input
+  const [selectedCategory, setSelectedCategory] = useState(null); // local category
 
-  // Layout columns
   const NUM_COLUMNS = Math.floor(screenWidth / MIN_ITEM_WIDTH) || 2;
   const ITEM_WIDTH =
     (screenWidth - ITEM_MARGIN * (NUM_COLUMNS + 1)) / NUM_COLUMNS;
@@ -71,41 +67,42 @@ export default function ProductList() {
     setPage(2);
   }, [dispatch]);
 
-  // Search khi nhấn Enter
+  // -------------------- Search --------------------
   const handleSearchSubmit = () => {
-    dispatch(setSearchQuery(inputText)); // lưu vào redux
+    dispatch(setSearchQuery(inputText)); // lưu search vào redux
+    dispatch(setCategoryIds([]));         // bỏ category
     dispatch(resetProducts());
-    dispatch(fetchProducts({ page: 1, per_page: PER_PAGE, search: inputText, categoryIds }));
+    dispatch(fetchProducts({ page: 1, per_page: PER_PAGE, search: inputText }));
     setPage(2);
     setHasMore(true);
+    setSelectedCategory(null);
   };
 
-  // Chọn category
- const handleCategorySelect = (cat) => {
-  let ids = [];
+  // -------------------- Category --------------------
+  const handleCategorySelect = (cat) => {
+    let ids = cat.id === 1000 ? [] : [cat.id, ...(cat.childrenIds || [])];
+    setSelectedCategory(cat);
 
-  if (cat.id === 1000) {
-    // 👉 "Tất Cả" => không filter theo category
-    ids = [];
-  } else {
-    ids = [cat.id, ...(cat.childrenIds || [])];
-  }
+    dispatch(setCategoryIds(ids));
+    dispatch(setSearchQuery("")); // bỏ search
+    dispatch(resetProducts());
+    dispatch(fetchProducts({ page: 1, per_page: PER_PAGE, categoryIds: ids }));
+    setPage(2);
+    setHasMore(true);
+    setInputText(""); // clear local input
+  };
 
-  setSelectedCategory(cat);
-
-  dispatch(setCategoryIds(ids));
-  dispatch(resetProducts());
-  dispatch(fetchProducts({ page: 1, per_page: PER_PAGE, search: searchQuery, categoryIds: ids }));
-
-  setPage(2);
-  setHasMore(true);
-};
-
-  // Infinite scroll
-  // Infinite scroll
+  // -------------------- Infinite scroll --------------------
   const handleEndReached = () => {
     if (!loading && hasMore) {
-      dispatch(fetchProducts({ page, per_page: PER_PAGE, search: searchQuery, categoryIds }))
+      dispatch(
+        fetchProducts({
+          page,
+          per_page: PER_PAGE,
+          search: searchQuery,
+          categoryIds,
+        })
+      )
         .unwrap()
         .then((res) => {
           if (!res || !res.data || res.data.length === 0 || page >= res.totalPages) {
@@ -118,8 +115,6 @@ export default function ProductList() {
     }
   };
 
-
-  // Lọc search local (fallback để chính xác hơn)
   const filteredProducts = products.filter((item) =>
     removeVietnameseTones(item.name).includes(removeVietnameseTones(searchQuery))
   );
@@ -127,9 +122,9 @@ export default function ProductList() {
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <HeaderTop
-        searchQuery={inputText}            // 👈 dùng local input
-        setSearchQuery={setInputText}      // 👈 chỉ update state local
-        onSubmitSearch={handleSearchSubmit} // 👈 nhấn Enter mới search
+        searchQuery={inputText}
+        setSearchQuery={setInputText}
+        onSubmitSearch={handleSearchSubmit}
         onCartPress={() => navigation.navigate("Cart")}
       />
 
@@ -138,7 +133,6 @@ export default function ProductList() {
         onSelectCategory={handleCategorySelect}
       />
 
-      {/* Loading khi đổi category */}
       {loading && products.length === 0 ? (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator size="large" color="#00c6ff" />
@@ -174,7 +168,6 @@ export default function ProductList() {
         />
       )}
 
-      {/* Modal chi tiết sản phẩm */}
       {selectedProduct && (
         <ProductDetail
           product={selectedProduct}
