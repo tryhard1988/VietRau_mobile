@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
 
 export default function HeaderTop({ searchQuery, setSearchQuery, onSubmitSearch, onCartPress }) {
-  const navigation = useNavigation();
   const cart = useSelector((state) => state.cart || []);
   const totalItems = cart.length;
 
@@ -19,8 +17,8 @@ export default function HeaderTop({ searchQuery, setSearchQuery, onSubmitSearch,
           placeholder="Tìm sản phẩm..."
           placeholderTextColor="#555"
           value={searchQuery}
-          onChangeText={setSearchQuery}
-          onSubmitEditing={() => onSubmitSearch(searchQuery)}
+          onChangeText={setSearchQuery}      // chỉ thay đổi state local
+          onSubmitEditing={onSubmitSearch}   // nhấn Enter mới gọi API
           autoCorrect={false}
           keyboardType="default"
           textContentType="none"
@@ -28,6 +26,7 @@ export default function HeaderTop({ searchQuery, setSearchQuery, onSubmitSearch,
           spellCheck={false}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          returnKeyType="search"             // hiển thị nút search trên bàn phím
         />
         <Icon name="search" size={20} color="#555" style={styles.searchIcon} />
       </View>
@@ -56,7 +55,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 10, // bo góc nhẹ
+    borderRadius: 10,
     paddingHorizontal: 10,
   },
   searchInput: {
