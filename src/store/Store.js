@@ -7,7 +7,7 @@ import userReducer from './reducers/UserReducer';
 
 // middleware để bắt các action REQUEST khi offline
 const networkMiddleware = createNetworkMiddleware({
-  regexActionType: /.*REQUEST/, // các action kết thúc bằng REQUEST sẽ được queue khi offline
+  regexActionType: /.*\/pending$/,
 });
 
 const store = configureStore({
@@ -18,7 +18,7 @@ const store = configureStore({
     user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(networkMiddleware),
+    [networkMiddleware, ...getDefaultMiddleware()],
 });
 
 export default store;

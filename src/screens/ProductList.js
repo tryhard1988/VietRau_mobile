@@ -141,7 +141,7 @@ export default function ProductList() {
       ) : (
         <FlatList
           data={filteredProducts}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ProductItem
               item={item}
@@ -158,14 +158,27 @@ export default function ProductList() {
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
           ListFooterComponent={
-            loading && products.length > 0 ? (
+            loading && filteredProducts.length > 0 ? (
               <ActivityIndicator style={{ margin: 10 }} />
             ) : null
           }
-          contentContainerStyle={{ paddingTop: ITEM_MARGIN }}
+          contentContainerStyle={{
+            paddingTop: ITEM_MARGIN,
+            flexGrow: 1 // 👈 để EmptyComponent chiếm hết chiều cao
+          }}
           ListHeaderComponent={<BannerSlider />}
           ListHeaderComponentStyle={{ marginBottom: 10 }}
+          ListEmptyComponent={
+            !loading && (
+              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontSize: 16, color: "#555" }}>
+                  Không tìm thấy sản phẩm nào
+                </Text>
+              </View>
+            )
+          }
         />
+
       )}
 
       {selectedProduct && (

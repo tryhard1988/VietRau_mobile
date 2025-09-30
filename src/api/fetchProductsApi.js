@@ -28,8 +28,6 @@ export const fetchProductsApi = async ({ page = 1, per_page = 20, search = "", c
       params.category = Array.isArray(category) ? category.join(",") : category;
     }
 
-    console.log("📡 fetchProductsApi gọi:", { url: `${WC_API_URL}/products`, params });
-
     const res = await axios.get(`${WC_API_URL}/products`, { params });
 
     return {
