@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Nền trắng -->
+    <item android:drawable="@android:color/white" />
+
+    <!-- Logo ở giữa -->
+    <item>
+        <bitmap
+            android:gravity="fill"
+            android:src="@drawable/flash_screen" />
+    </item>
+
+</layer-list>

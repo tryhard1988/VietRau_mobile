@@ -40,13 +40,7 @@ export default function BottomTabs({ navigation }) {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Sản Phẩm">
-        {() => (
-          <>            
-            <ProductList />
-          </>
-        )}
-      </Tab.Screen>
+      <Tab.Screen name="Sản Phẩm" component={ProductList} />
       <Tab.Screen name="Giới thiệu c.ty" component={AboutScreen} />
       <Tab.Screen name="Tin tức" component={NewsScreen} />
       <Tab.Screen name="Tôi" component={ProfileScreen} />

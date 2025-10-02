@@ -66,7 +66,7 @@ export default function CheckoutScreen({ navigation }) {
             );
 
             dispatch(clearCart());
-            navigation.navigate("Products"); // quay về màn hình sản phẩm
+            navigation.navigate("Home"); // quay về màn hình sản phẩm
         } catch (err) {
             console.log(err);
             Alert.alert("❌ Lỗi", "Không thể tạo đơn hàng. Thử lại sau!");

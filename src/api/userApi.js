@@ -1,6 +1,6 @@
 // store/api/userApi.js
 import axios from "axios";
-import { WC_API_URL, WC_CONSUMER_KEY, WC_CONSUMER_SECRET } from "@env";
+import { WC_API_URL, WC_CONSUMER_KEY, WC_CONSUMER_SECRET, WP_API_URL } from "@env";
 
 /**
  * 1. Lấy thông tin user theo ID
@@ -63,7 +63,7 @@ export const updateUserApi = async (userId, data) => {
  */
 export const loginUserApi = async ({ email, password }) => {
   try {
-    const res = await axios.post(`${WC_API_URL}/jwt-auth/v1/token`, {
+    const res = await axios.post(`${WP_API_URL}/jwt-auth/v1/token`, {
       username: email, // WooCommerce JWT dùng username → map email
       password,
     });
